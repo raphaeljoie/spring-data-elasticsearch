@@ -33,7 +33,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.SuppressForbidden;
 import org.elasticsearch.common.network.NetworkModule;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.reindex.ReindexPlugin;
 import org.elasticsearch.join.ParentJoinPlugin;
 import org.elasticsearch.percolator.PercolatorPlugin;
@@ -114,14 +114,20 @@ public class TransportClientFactoryBean implements FactoryBean<TransportClient>,
 			Assert.hasText(hostName, "[Assertion failed] missing host name in 'clusterNodes'");
 			Assert.hasText(port, "[Assertion failed] missing port in 'clusterNodes'");
 			logger.info("adding transport node : " + clusterNode);
-			client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostName), Integer.valueOf(port)));
+			client.addTransportAddress(new TransportAddress(InetAddress.getByName(hostName), Integer.valueOf(port)));
 		}
 		client.connectedNodes();
 	}
 
 	private Settings settings() {
 		if (properties != null) {
-			return Settings.builder().put(properties).build();
+			Settings.Builder builder = Settings.builder();
+
+			properties.forEach((key, value) -> {
+				builder.put(key.toString(), value.toString());
+			});
+
+			return builder.build();
 		}
 		return Settings.builder()
 				.put("cluster.name", clusterName)

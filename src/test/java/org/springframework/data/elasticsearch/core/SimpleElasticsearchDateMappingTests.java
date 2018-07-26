@@ -22,6 +22,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.data.elasticsearch.entities.SampleDateMappingEntity;
+import org.springframework.data.elasticsearch.utils.XContentBuilderToString;
 
 /**
  * @author Jakub Vavrik
@@ -37,6 +38,6 @@ public class SimpleElasticsearchDateMappingTests {
 	@Test
 	public void testCorrectDateMappings() throws NoSuchFieldException, IntrospectionException, IOException {
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(SampleDateMappingEntity.class, "mapping", "id", null);
-		Assert.assertEquals(EXPECTED_MAPPING, xContentBuilder.string());
+		Assert.assertEquals(EXPECTED_MAPPING, XContentBuilderToString.convert(xContentBuilder));
 	}
 }

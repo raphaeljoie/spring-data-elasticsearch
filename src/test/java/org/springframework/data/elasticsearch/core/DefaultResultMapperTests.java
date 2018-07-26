@@ -26,8 +26,8 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -73,7 +73,7 @@ public class DefaultResultMapperTests {
 		//Given
 		SearchHit[] hits = {createCarHit("Ford", "Grat"), createCarHit("BMW", "Arrow")};
 		SearchHits searchHits = mock(SearchHits.class);
-		when(searchHits.totalHits()).thenReturn(2L);
+		when(searchHits.totalHits).thenReturn(2L);
 		when(searchHits.iterator()).thenReturn(new ArrayIterator(hits));
 		when(response.getHits()).thenReturn(searchHits);
 
@@ -94,7 +94,7 @@ public class DefaultResultMapperTests {
 		//Given
 		SearchHit[] hits = {createCarHit("Ford", "Grat"), createCarHit("BMW", "Arrow")};
 		SearchHits searchHits = mock(SearchHits.class);
-		when(searchHits.totalHits()).thenReturn(2L);
+		when(searchHits.totalHits).thenReturn(2L);
 		when(searchHits.iterator()).thenReturn(new ArrayIterator(hits));
 		when(response.getHits()).thenReturn(searchHits);
 
@@ -112,7 +112,7 @@ public class DefaultResultMapperTests {
 		//Given
 		SearchHit[] hits = {createCarPartialHit("Ford", "Grat"), createCarPartialHit("BMW", "Arrow")};
 		SearchHits searchHits = mock(SearchHits.class);
-		when(searchHits.totalHits()).thenReturn(2L);
+		when(searchHits.totalHits).thenReturn(2L);
 		when(searchHits.iterator()).thenReturn(new ArrayIterator(hits));
 		when(response.getHits()).thenReturn(searchHits);
 
@@ -153,7 +153,7 @@ public class DefaultResultMapperTests {
 		ImmutableEntity result = resultMapper.mapResult(response, ImmutableEntity.class);
 
 		assertThat(result, is(notNullValue()));
-		assertThat(result.getId(), is("identifier"));
+		assertThat(result.id, is("identifier"));
 	}
 
 	@Test // DATAES-198
@@ -227,13 +227,13 @@ public class DefaultResultMapperTests {
 
 	private SearchHit createCarHit(String name, String model) {
 		SearchHit hit = mock(SearchHit.class);
-		when(hit.sourceAsString()).thenReturn(createJsonCar(name, model));
+		when(hit.getSourceAsString()).thenReturn(createJsonCar(name, model));
 		return hit;
 	}
 
 	private SearchHit createCarPartialHit(String name, String model) {
 		SearchHit hit = mock(SearchHit.class);
-		when(hit.sourceAsString()).thenReturn(null);
+		when(hit.getSourceAsString()).thenReturn(null);
 		when(hit.getFields()).thenReturn(createCarFields(name, model));
 		return hit;
 	}
@@ -246,10 +246,10 @@ public class DefaultResultMapperTests {
 		return sb.toString();
 	}
 
-	private Map<String, SearchHitField> createCarFields(String name, String model) {
-		Map<String, SearchHitField> result = new HashMap<>();
-		result.put("name", new SearchHitField("name", asList(name)));
-		result.put("model", new SearchHitField("model", asList(model)));
+	private Map<String, DocumentField> createCarFields(String name, String model) {
+		Map<String, DocumentField> result = new HashMap<>();
+		result.put("name", new DocumentField("name", asList(name)));
+		result.put("model", new DocumentField("model", asList(model)));
 		return result;
 	}
 

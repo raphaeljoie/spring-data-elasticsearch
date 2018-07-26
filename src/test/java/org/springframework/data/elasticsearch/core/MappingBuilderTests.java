@@ -36,6 +36,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.data.elasticsearch.entities.*;
 import org.springframework.data.elasticsearch.entities.GeoEntity;
+import org.springframework.data.elasticsearch.utils.XContentBuilderToString;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -68,7 +69,7 @@ public class MappingBuilderTests {
 				"\"analyzer\":\"standard\"}}}}";
 
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(SampleTransientEntity.class, "mapping", "id", null);
-		assertThat(xContentBuilder.string(), is(expected));
+		assertThat(XContentBuilderToString.convert(xContentBuilder), is(expected));
 	}
 
 	@Test
@@ -80,7 +81,7 @@ public class MappingBuilderTests {
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(StockPrice.class, "mapping", "id", null);
 
 		//Then
-		assertThat(xContentBuilder.string(), is(expected));
+		assertThat(XContentBuilderToString.convert(xContentBuilder), is(expected));
 	}
 
 	@Test
@@ -110,7 +111,7 @@ public class MappingBuilderTests {
 	public void shouldCreateMappingForSpecifiedParentType() throws IOException {
 		final String expected = "{\"mapping\":{\"_parent\":{\"type\":\"parentType\"},\"properties\":{}}}";
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(MinimalEntity.class, "mapping", "id", "parentType");
-		assertThat(xContentBuilder.string(), is(expected));
+		assertThat(XContentBuilderToString.convert(xContentBuilder), is(expected));
 	}
 
 	/*
@@ -124,7 +125,7 @@ public class MappingBuilderTests {
 				"\"type\":\"date\",\"index\":false}}}}";
 
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(SampleInheritedEntity.class, "mapping", "id", null);
-		assertThat(xContentBuilder.string(), is(expected));
+		assertThat(XContentBuilderToString.convert(xContentBuilder), is(expected));
 	}
 
 	/*
@@ -161,7 +162,7 @@ public class MappingBuilderTests {
 		XContentBuilder xContentBuilder = MappingBuilder.buildMapping(GeoEntity.class, "mapping", "id", null);
 
 		//then
-		final String result = xContentBuilder.string();
+		final String result = XContentBuilderToString.convert(xContentBuilder);
 
 		assertThat(result, containsString("\"pointA\":{\"type\":\"geo_point\""));
 		assertThat(result, containsString("\"pointB\":{\"type\":\"geo_point\""));
