@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.springframework.data.elasticsearch.utils.IndexBuilder.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -46,13 +47,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Mohsin Husen
  * @author Keivn Leturc
  * @author Nordine Bittich
+ * @author Don Wellington
+ * @author Raphael Joie
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:elasticsearch-template-test.xml")
 public class MappingBuilderTests {
 
-	@Autowired
-	private ElasticsearchTemplate elasticsearchTemplate;
+	@Autowired private ElasticsearchTemplate elasticsearchTemplate;
+
+	private String xContentBuilderToString(XContentBuilder builder) {
+		builder.close();
+		ByteArrayOutputStream bos = (ByteArrayOutputStream) builder.getOutputStream();
+		return bos.toString();
+	}
 
 	@Test
 	public void shouldNotFailOnCircularReference() {
@@ -142,7 +150,8 @@ public class MappingBuilderTests {
 		Date createdDate = new Date();
 		String message = "msg";
 		String id = "abc";
-		elasticsearchTemplate.index(new SampleInheritedEntityBuilder(id).createdDate(createdDate).message(message).buildIndex());
+		elasticsearchTemplate
+				.index(new SampleInheritedEntityBuilder(id).createdDate(createdDate).message(message).buildIndex());
 		elasticsearchTemplate.refresh(SampleInheritedEntity.class);
 
 		SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(matchAllQuery()).build();
@@ -175,40 +184,40 @@ public class MappingBuilderTests {
 	 */
 	@Test
 	public void shouldHandleReverseRelationship() {
-		//given
+		// given
 		elasticsearchTemplate.createIndex(User.class);
 		elasticsearchTemplate.putMapping(User.class);
 		elasticsearchTemplate.createIndex(Group.class);
 		elasticsearchTemplate.putMapping(Group.class);
-		//when
+		// when
 
-		//then
+		// then
 
 	}
 
 	@Test
 	public void shouldMapBooks() {
-		//given
+		// given
 		elasticsearchTemplate.createIndex(Book.class);
 		elasticsearchTemplate.putMapping(Book.class);
-		//when
-		//then
+		// when
+		// then
 
 	}
 
 	@Test // DATAES-420
 	public void shouldUseBothAnalyzer() {
-		//given
+		// given
 		elasticsearchTemplate.deleteIndex(Book.class);
 		elasticsearchTemplate.createIndex(Book.class);
 		elasticsearchTemplate.putMapping(Book.class);
 
-		//when
+		// when
 		Map mapping = elasticsearchTemplate.getMapping(Book.class);
 		Map descriptionMapping = (Map) ((Map) mapping.get("properties")).get("description");
 		Map prefixDescription = (Map) ((Map) descriptionMapping.get("fields")).get("prefix");
 
-		//then
+		// then
 		assertThat(prefixDescription.size(), is(3));
 		assertThat(prefixDescription.get("type"), equalTo("text"));
 		assertThat(prefixDescription.get("analyzer"), equalTo("stop"));

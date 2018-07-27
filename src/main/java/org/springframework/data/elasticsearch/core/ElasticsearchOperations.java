@@ -16,7 +16,6 @@
 package org.springframework.data.elasticsearch.core;
 
 import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.Nullable;
 import org.springframework.data.domain.Page;
@@ -42,11 +41,6 @@ public interface ElasticsearchOperations {
 	 * @return Converter in use
 	 */
 	ElasticsearchConverter getElasticsearchConverter();
-
-	/**
-	 * @return elasticsearch client
-	 */
-	Client getClient();
 
 	/**
 	 * Create an index for a class

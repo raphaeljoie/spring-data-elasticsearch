@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.data.elasticsearch.repositories;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.entities.SampleEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * 
  * @author Don Wellington
- *
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration("classpath:custom-method-repository-test.xml")
-public class CustomMethodRepositoryTests extends CustomMethodRepositoryBaseTests {
-	@Autowired private ElasticsearchTemplate elasticsearchTemplate;
+@ContextConfiguration("classpath:custom-method-repository-rest-test.xml")
+public class CustomMethodRepositoryRestTests extends CustomMethodRepositoryBaseTests {
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchTemplate;
 
-	@Before
-	public void before() {
-		elasticsearchTemplate.deleteIndex(SampleEntity.class);
-		elasticsearchTemplate.createIndex(SampleEntity.class);
-		elasticsearchTemplate.putMapping(SampleEntity.class);
-		elasticsearchTemplate.refresh(SampleEntity.class);
-	}
+    @Before
+    public void before() {
+        elasticsearchTemplate.deleteIndex(SampleEntity.class);
+        elasticsearchTemplate.createIndex(SampleEntity.class);
+        elasticsearchTemplate.putMapping(SampleEntity.class);
+        elasticsearchTemplate.refresh(SampleEntity.class);
+    }
 }
